@@ -19,6 +19,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 public class Main extends JFrame{
@@ -127,8 +128,13 @@ public class Main extends JFrame{
 	public void mekuru(int x, int y) {
 		if ( mine.getMine(x, y) == true ) {
 			btn[x][y].setOpaque(true);
+			btn[x][y].setBackground(Color.white);
 			ImageIcon mine = new ImageIcon("./src/mine.png"); 
 			btn[x][y].setIcon(mine);
+			JOptionPane.showMessageDialog(this, "GAME OVER!!", "GAME OVER", JOptionPane.YES_NO_OPTION);
+			Mine mine_new = new Mine(9,9);
+			
+			
 		}else {
 			btn[x][y].setOpaque(true);
 			btn[x][y].setBackground(Color.white);	
