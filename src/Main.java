@@ -6,12 +6,12 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GridLayout;
 import java.awt.Image;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import java.util.Random;
 
 import javax.swing.Icon;
@@ -24,7 +24,8 @@ import javax.swing.JPanel;
 public class Main extends JFrame{
 	
 	private JPanel contentPane;
-	
+	private JButton[][] btn = new JButton[9][9];
+	private Mine mine = new Mine(9,9);
 
 	/**
 	 * Launch the application.
@@ -54,28 +55,19 @@ public class Main extends JFrame{
 		contentPane.setLayout(new GridLayout(9,9));
 		setContentPane(contentPane);
 		
-		JButton[][] btn = new JButton[9][9];
-		
-
-		Mine mine = new Mine(9,9);
-		
-		 ArrayList<Integer> aryX = new ArrayList<Integer>();
-		 ArrayList<Integer> aryY = new ArrayList<Integer>();
-		 
-		for ( int i = 0; i < 10; i++ ) {
-			aryX.add(i);	
-			aryY.add(i);
-		}
-		Collections.shuffle(aryX);
-		Collections.shuffle(aryY);
-
-		mine.setMine(0,9);
-		for ( int j = 0; j < 10; j++ ) {
-			mine.setMine(aryX.get(j), aryY.get(j));
+		//Mineをランダムに配置する
+		Random random = new Random();
+		int count = 0;
+		while( count < 10) {
+			int randomX = random.nextInt(9);
+			int randomY = random.nextInt(9);
+			if( mine.getMine (randomX, randomY) == false) {
+				mine.setMine(randomX, randomY);
+				count ++;
+			}
 		}
 		
-		
-		
+		//ボタンの処理
 		for ( int i = 0; i < 9; i++ ) {
 			for ( int j = 0; j < 9; j++ ) {
 				btn[i][j] = new JButton();
@@ -90,26 +82,76 @@ public class Main extends JFrame{
 				final int x = i;
 				final int y = j;
 				final JButton button = btn[i][j];
-
-				
-				
-				button.addActionListener(new ActionListener() {
-					
+				 button.addMouseListener(new MouseListener(){
 					@Override
-					public void actionPerformed(ActionEvent e) {
-						if ( mine.getMine(x, y) == true ) {
-							btn[x][y].setOpaque(true);
-							btn[x][y].setBackground(Color.black);
-						}else {
-							btn[x][y].setOpaque(true);
-							btn[x][y].setBackground(Color.white);	
-							btn[x][y].setText(String.valueOf(mine.countMine(x,y)));
-						}		
+					public void mouseEntered(MouseEvent arg0) {
+						// TODO Auto-generated method stub
+						
 					}
-				});
+
+					@Override
+					public void mouseExited(MouseEvent arg0) {
+						// TODO Auto-generated method stub
+						
+					}
+
+					@Override
+					public void mousePressed(MouseEvent e) {
+						// TODO Auto-generated method stub
+						if ( e.getModifiers() == MouseEvent.BUTTON3_MASK ) {
+							setFlags(x, y);
+						}else {
+							mekuru(x, y);
+						}
+					}
+
+					@Override
+					public void mouseReleased(MouseEvent arg0) {
+						// TODO Auto-generated method stub
+						
+					}
+
+					@Override
+					public void mouseClicked(MouseEvent e) {
+						// TODO Auto-generated method stub
+						
+					}
+				    });
+				
+
 			}
 		
+		}
+		
+	}
+	public void mekuru(int x, int y) {
+		if ( mine.getMine(x, y) == true ) {
+			btn[x][y].setOpaque(true);
+			btn[x][y].setBackground(Color.black);
+		}else {
+			btn[x][y].setOpaque(true);
+			btn[x][y].setBackground(Color.white);	
+			if(mine.countMine(x,y) > 0) {
+				btn[x][y].setText(String.valueOf(mine.countMine(x,y)));
+			}else {
+				for (int i = x - 1; i <= x + 1; i ++) {
+					if ( i < 0 || i >= mine.getWidth()) {
+						continue;
+					}
+					for ( int j = y - 1; j <= y + 1; j ++) {
+						if ( j < 0 || j >= mine.getHeight()) {
+							continue;
+						}
+						mekuru(i,j);
+					}
+				}
+			}
 		}	
+	}
+	
+	public void setFlags(int x, int y) {
+		ImageIcon flag = new ImageIcon("./src/flag.png"); 
+		btn[x][y].setIcon(flag);
 	}
 }
 
