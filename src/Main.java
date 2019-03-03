@@ -127,7 +127,8 @@ public class Main extends JFrame{
 	public void mekuru(int x, int y) {
 		if ( mine.getMine(x, y) == true ) {
 			btn[x][y].setOpaque(true);
-			btn[x][y].setBackground(Color.black);
+			ImageIcon mine = new ImageIcon("./src/mine.png"); 
+			btn[x][y].setIcon(mine);
 		}else {
 			btn[x][y].setOpaque(true);
 			btn[x][y].setBackground(Color.white);	
