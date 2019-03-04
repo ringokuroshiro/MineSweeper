@@ -24,10 +24,10 @@ import javax.swing.JPanel;
 
 public class Main extends JFrame{
 	
-	private JPanel contentPane;
-	private JButton[][] btn = new JButton[9][9];
+	private JPanel contentPane=new JPanel();
 	private Mine mine = new Mine(9,9);
-
+	JButton[][] btn = new JButton[9][9];
+	int count;
 	/**
 	 * Launch the application.
 	 */
@@ -38,25 +38,38 @@ public class Main extends JFrame{
 				try {
 					Main frame = new Main();
 					frame.setVisible(true);
-					frame.setTitle("É}ÉCÉìÉXÉCÅ[ÉpÅ[");
+					frame.setTitle("MineSweeper");
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			}
 		});
 	}	
-
+	
 	/**
 	 * Create the frame.
 	 */
 	public Main() {
+
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 400, 400);
-		contentPane = new JPanel();
+
+		contentPane=new JPanel();
 		contentPane.setLayout(new GridLayout(9,9));
 		setContentPane(contentPane);
-		
-		//MineÇÉâÉìÉ_ÉÄÇ…îzíuÇ∑ÇÈ
+		initGame();
+	}
+	
+	public void initGame() {
+		contentPane.removeAll();
+
+		setMine();
+		setButton();
+			
+	}
+	
+	public void setMine() {
+		//set some of mines in random
 		Random random = new Random();
 		int count = 0;
 		while( count < 10) {
@@ -67,77 +80,109 @@ public class Main extends JFrame{
 				count ++;
 			}
 		}
-		
-		//É{É^ÉìÇÃèàóù
-		for ( int i = 0; i < 9; i++ ) {
-			for ( int j = 0; j < 9; j++ ) {
-				btn[i][j] = new JButton();
-				contentPane.add(btn[i][j]);
-				
-			}
-		}
-		
-		for ( int i = 0; i < 9; i++ ) {
-			for ( int j = 0; j < 9; j++ ) {
-
-				final int x = i;
-				final int y = j;
-				final JButton button = btn[i][j];
-				 button.addMouseListener(new MouseListener(){
-					@Override
-					public void mouseEntered(MouseEvent arg0) {
-						// TODO Auto-generated method stub
-						
-					}
-
-					@Override
-					public void mouseExited(MouseEvent arg0) {
-						// TODO Auto-generated method stub
-						
-					}
-
-					@Override
-					public void mousePressed(MouseEvent e) {
-						// TODO Auto-generated method stub
-						if ( e.getModifiers() == MouseEvent.BUTTON3_MASK ) {
-							setFlags(x, y);
-						}else {
-							mekuru(x, y);
-						}
-					}
-
-					@Override
-					public void mouseReleased(MouseEvent arg0) {
-						// TODO Auto-generated method stub
-						
-					}
-
-					@Override
-					public void mouseClicked(MouseEvent e) {
-						// TODO Auto-generated method stub
-						
-					}
-				    });
-				
-
-			}
-		
-		}
-		
 	}
+	
+	public void setButton() {
+		//ÔøΩ{ÔøΩ^ÔøΩÔøΩÔøΩÃèÔøΩÔøΩÔøΩ
+		
+
+				for ( int i = 0; i < 9; i++ ) {
+					for ( int j = 0; j < 9; j++ ) {
+						btn[i][j] = new JButton();
+						contentPane.add(btn[i][j]);
+						
+					}
+				}
+				
+				for ( int i = 0; i < 9; i++ ) {
+					for ( int j = 0; j < 9; j++ ) {
+
+						final int x = i;
+						final int y = j;
+						final JButton button = btn[i][j];
+						 button.addMouseListener(new MouseListener(){
+							@Override
+							public void mouseEntered(MouseEvent arg0) {
+								// TODO Auto-generated method stub
+								
+							}
+
+							@Override
+							public void mouseExited(MouseEvent arg0) {
+								// TODO Auto-generated method stub
+								
+							}
+
+							@Override
+							public void mousePressed(MouseEvent e) {
+								// TODO Auto-generated method stub
+								if ( e.getModifiers() == MouseEvent.BUTTON3_MASK ) {
+									setFlags(x, y);
+								}else {
+									mekuru(x, y);
+								}
+							}
+
+							@Override
+							public void mouseReleased(MouseEvent arg0) {
+								// TODO Auto-generated method stub
+								
+							}
+
+							@Override
+							public void mouseClicked(MouseEvent e) {
+								// TODO Auto-generated method stub
+								
+							}
+						});
+					}
+				}
+	}
+	private boolean mekkutteru(int x, int y) {
+		JButton button = btn[x][y];
+		return (button.getBackground() == Color.blue);
+	}
+	
+	
+	private boolean owattakana() {
+		if( count == 71 ) {
+			return true;
+		}else {
+			return false;
+		}
+	}
+	
+	private void owattayo() {
+		JOptionPane.showConfirmDialog(null, "Success!", "Do you want to start the new game?", JOptionPane.NO_OPTION);
+	}
+	
 	public void mekuru(int x, int y) {
+		JButton button = btn[x][y];
+		
+		if(mekkutteru(x,y)) {
+			return;
+		}
+		count++;
 		if ( mine.getMine(x, y) == true ) {
-			btn[x][y].setOpaque(true);
-			btn[x][y].setBackground(Color.white);
+			button.setOpaque(true);
+			button.setBackground(Color.blue);
 			ImageIcon mine = new ImageIcon("./src/mine.png"); 
 			btn[x][y].setIcon(mine);
-			JOptionPane.showMessageDialog(this, "GAME OVER!!", "GAME OVER", JOptionPane.YES_NO_OPTION);
-			Mine mine_new = new Mine(9,9);
-			
-			
+			int ans = JOptionPane.showConfirmDialog(null, "Start new game", "GAME OVER", JOptionPane.YES_NO_OPTION);
+			switch(ans) {
+				case JOptionPane.YES_OPTION:
+					Main frame = new Main();
+					frame.setVisible(true);
+					frame.setTitle("MineSweeper");
+					dispose();
+					break;
+				case JOptionPane.NO_OPTION:
+					System.exit(0);
+			}
 		}else {
 			btn[x][y].setOpaque(true);
-			btn[x][y].setBackground(Color.white);	
+			btn[x][y].setBackground(Color.blue);	
+			button.setBorder(null);
 			if(mine.countMine(x,y) > 0) {
 				btn[x][y].setText(String.valueOf(mine.countMine(x,y)));
 			}else {
@@ -150,15 +195,23 @@ public class Main extends JFrame{
 							continue;
 						}
 						mekuru(i,j);
+						
 					}
 				}
 			}
-		}	
+		}
+		
+		if(owattakana()) {
+			owattayo();
+		}
+		
 	}
 	
 	public void setFlags(int x, int y) {
 		ImageIcon flag = new ImageIcon("./src/flag.png"); 
 		btn[x][y].setIcon(flag);
 	}
+	
+	
 }
 
